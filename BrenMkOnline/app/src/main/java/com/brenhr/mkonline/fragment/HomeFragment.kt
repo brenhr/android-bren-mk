@@ -1,6 +1,5 @@
 package com.brenhr.mkonline.fragment
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -9,18 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
 import com.brenhr.mkonline.R
-import com.brenhr.mkonline.database.ProductService
+import com.brenhr.mkonline.database.ProductParser
 import com.brenhr.mkonline.model.Product
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import android.graphics.Typeface
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.ktx.storage
 
 class HomeFragment : Fragment() {
-    private var productList = mutableListOf<Product>()
-
-    private val productService: ProductService = ProductService()
+    private val productService: ProductParser = ProductParser()
+    private val storage = Firebase.storage
+    private val database = Firebase.database
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +49,13 @@ class HomeFragment : Fragment() {
         getAllProducts()
     }
 
-    fun getAllProducts() {
-        val database = Firebase.database
+    private fun getAllProducts() {
         val myRef = database.getReference("Product")
         myRef.get().addOnSuccessListener {
             it.children.forEach { child ->
                 Log.i("database", "Got value ${child.value}")
-                createCardView(productService.parser(child))
+                val p = productService.parser(child)
+                getImageFromStorage(p)
             }
         }.addOnFailureListener{
             Log.e("database", "Error getting data", it)
@@ -62,13 +63,32 @@ class HomeFragment : Fragment() {
         Log.i("database", "Returning list")
     }
 
-    private fun createCardView(product: Product) {
+    private fun getImageFromStorage(product: Product) {
+        val storageRef = storage.reference
+        val sku = product.sku!!.lowercase()
+        val spaceRef = storageRef.child("clothes/$sku/$sku-main.png")
+        Log.i("storage","URI: ${spaceRef.path}")
+        spaceRef.downloadUrl.addOnSuccessListener {
+            createCardView(product, it.toString())
+        }.addOnFailureListener {
+            Log.e("storage", it.toString())
+        }
+    }
+
+    private fun createCardView(product: Product, imageUrl: String) {
         Log.i("UI","Product: " + product.sku)
         val productCard = CardView(this.requireContext())
         val productCardParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT, 700)
         productCard.layoutParams = productCardParams
         val mainLayout = this.view?.findViewById<LinearLayout>(R.id.mainLayout)
+
+        //Main space betweeen one card and another
+        val cardSpace = Space(this.context)
+        val cardSpaceParams = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            30)
+        cardSpace.layoutParams = cardSpaceParams
 
         //Creating main card layout (will divide image and product details)
         val cardLayout = LinearLayout(this.requireContext())
@@ -79,15 +99,13 @@ class HomeFragment : Fragment() {
         cardLayout.layoutParams = params
         //Creating imageview
         val productImage = ImageView(this.requireContext())
-        val imageParams = ViewGroup.LayoutParams(
-            600,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
+        val imageParams = ViewGroup.LayoutParams(600, 550)
         productImage.layoutParams = imageParams
-        productImage.setImageResource(R.drawable.skirt)
+        Glide.with(this.requireContext()).load(imageUrl).into(productImage);
         //Adding image to cardlayout
         cardLayout.addView(productImage)
 
-        //Creating a vertical layout, which will be usefull to order the product details
+        //Creating a vertical layout, which will be useful to order the product details
         val productDetailLayout = LinearLayout(this.requireContext())
         productDetailLayout.orientation = LinearLayout.VERTICAL
         val productDetailLayoutParams = RelativeLayout.LayoutParams(
@@ -102,38 +120,55 @@ class HomeFragment : Fragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         productName.layoutParams = productNameParams
+        val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
+
         productName.setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
+        productName.typeface = boldTypeface
 
         //Creating a textview to show the product SKU
         val productSku = TextView(this.requireContext())
-        productSku.text = "SKU: " + product.sku
+        "SKU: ${product.sku}".also { productSku.text = it }
         val productSkuParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         productSku.layoutParams = productSkuParams
         productSku.setTextAppearance(R.style.TextAppearance_AppCompat_Small)
 
+        val spacePrice = Space(this.context)
+        val spacePriceParams = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            60)
+        spacePrice.layoutParams = spacePriceParams
+
         //Creating a textview to show the product price
         val price = TextView(this.requireContext())
-        price.text = "$ " + product.price + " " + product.currency
+        "$ ${product.price} ${product.currency}".also { price.text = it }
         val priceParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         price.layoutParams = priceParams
-        price.gravity = Gravity.RIGHT
+        Gravity.END.also { price.gravity = it }
         price.setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
+
+        val spaceButton = Space(this.context)
+        val spaceParams = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            100)
+        spaceButton.layoutParams = spaceParams
 
         val detailsButton = Button(this.requireContext())
         val buttonParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         detailsButton.layoutParams = buttonParams
-        detailsButton.text = "Show details"
+        detailsButton.text = getString(R.string.showDetailsText)
 
         //Add elements to layout
         productDetailLayout.addView(productName)
         productDetailLayout.addView(productSku)
+        productDetailLayout.addView(spacePrice)
         productDetailLayout.addView(price)
+        productDetailLayout.addView(spaceButton)
         productDetailLayout.addView(detailsButton)
 
         //add product detail layout to the card layout
@@ -143,7 +178,7 @@ class HomeFragment : Fragment() {
         productCard.addView(cardLayout)
 
         //add card layout to main layout
-        mainLayout!!.addView(productCard)
-
+        mainLayout!!.addView(cardSpace)
+        mainLayout.addView(productCard)
     }
 }
