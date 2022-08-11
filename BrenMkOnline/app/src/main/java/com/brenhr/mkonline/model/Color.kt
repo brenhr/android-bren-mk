@@ -1,9 +1,9 @@
 package com.brenhr.mkonline.model
 
 class Color {
-    private var id: String? = null
-    private var hexcode: String? = null
-    private var name: String? = null
+    var id: String
+    var hexcode: String
+    var name: String
 
     constructor(id: String, hexcode: String, name: String) {
         this.id = id

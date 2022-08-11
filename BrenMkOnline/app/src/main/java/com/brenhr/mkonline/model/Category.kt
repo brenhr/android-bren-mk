@@ -1,8 +1,8 @@
 package com.brenhr.mkonline.model
 
 class Category {
-    private var id: String? = null
-    private var name: String? = null
+    var id: String
+    var name: String
 
     constructor(id: String, name: String) {
         this.id = id

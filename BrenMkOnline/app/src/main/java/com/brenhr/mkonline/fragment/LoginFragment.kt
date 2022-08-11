@@ -21,13 +21,57 @@ class LoginFragment : Fragment() {
     private lateinit var loginButton: Button
     private lateinit var signUpButton: Button
 
-    private lateinit var email: String
-    private lateinit var password: String
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         auth = Firebase.auth
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_login, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        loginButton = this.requireView().findViewById(R.id.loginButton)
+        signUpButton = this.requireView().findViewById(R.id.signUpButton)
+
+        loginButton.setOnClickListener{
+            var email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
+            var password = this.requireView().findViewById<EditText>(R.id.password).text.toString()
+
+            Log.d("passwordAuthentication", "$email $password")
+
+            if(email.isNotEmpty() && password.isNotEmpty()) {
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("PasswordAuthentication", "signInWithEmail:success")
+                            val user: FirebaseUser = auth.currentUser!!
+                            Log.d("PasswordAuthentication", "User UID: ${user.uid}")
+                            showMyProfile()
+                        } else {
+                            Log.w("PasswordAuthentication", "signInWithEmail:failure",
+                                task.exception)
+                            Toast.makeText(this.requireContext(), "Authentication failed.",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(this.requireContext(), "Please fill out all the fields.",
+                    Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        signUpButton.setOnClickListener {
+            var email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
+            showRegisterView(email)
+        }
+
     }
 
     private fun showMyProfile() {
@@ -50,51 +94,6 @@ class LoginFragment : Fragment() {
         transaction.replace(R.id.frame_container, registerFragment)
         transaction.disallowAddToBackStack()
         transaction.commit()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        loginButton = this.requireView().findViewById(R.id.loginButton)
-        signUpButton = this.requireView().findViewById(R.id.signUpButton)
-        email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
-        password = this.requireView().findViewById<EditText>(R.id.password).toString()
-
-        loginButton.setOnClickListener{
-            if(email.isNotEmpty() && password.isNotEmpty()) {
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d("PasswordAuthentication", "signInWithEmail:success")
-                            val user: FirebaseUser = auth.currentUser!!
-                            Log.d("PasswordAuthentication", "User UID: ${user.uid}")
-                            showMyProfile()
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w("PasswordAuthentication", "signInWithEmail:failure",
-                                task.exception)
-                            Toast.makeText(this.requireContext(), "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
-                        }
-                    }
-            } else {
-                Toast.makeText(this.requireContext(), "Please fill out all the fields.",
-                    Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        signUpButton.setOnClickListener {
-            showRegisterView(email)
-        }
-
     }
 
 }

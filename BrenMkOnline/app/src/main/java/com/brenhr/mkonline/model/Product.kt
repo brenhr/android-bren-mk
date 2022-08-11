@@ -4,16 +4,16 @@ import android.telecom.Call
 import java.time.chrono.ChronoLocalDateTime
 
 class Product {
-    var id: String? = null
-    var brandId: String? = null
-    var categoryId: String? = null
-    var currency: String? = null
-    var datetime: String? = null
-    var description: String? = null
-    var details: MutableList<ProductDetail>? = null
-    var name: String? = null
-    var price: Double? = null
-    var sku: String? = null
+    var id: String
+    var brandId: String
+    var categoryId: String
+    var currency: String
+    var datetime: String
+    var description: String
+    var details: MutableList<ProductDetail>
+    var name: String
+    var price: Double
+    var sku: String
 
     constructor(id: String, brandId: String, categoryId: String, currency: String, datetime: String,
                 description: String, details: MutableList<ProductDetail>, name: String, price: Double,
