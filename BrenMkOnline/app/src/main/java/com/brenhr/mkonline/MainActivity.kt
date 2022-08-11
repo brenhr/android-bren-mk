@@ -7,22 +7,33 @@ import com.brenhr.mkonline.fragment.CartFragment
 import com.brenhr.mkonline.fragment.HomeFragment
 import com.brenhr.mkonline.fragment.LoginFragment
 import com.brenhr.mkonline.fragment.MyProfileFragment
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
-    private val homeFragment = HomeFragment();
-    private val cartFragment = CartFragment();
-    private val myProfileFragment = MyProfileFragment();
-    private val loginFragment = LoginFragment();
+    private lateinit var auth: FirebaseAuth
+    private lateinit var homeFragment: HomeFragment
+    private lateinit var cartFragment: CartFragment
+    private lateinit var myProfileFragment: MyProfileFragment
+    private lateinit var loginFragment: LoginFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        auth = Firebase.auth
+        homeFragment = HomeFragment()
+        cartFragment = CartFragment()
+        myProfileFragment = MyProfileFragment()
+        loginFragment = LoginFragment()
+
         setContentView(R.layout.activity_main)
 
         loadFragment(homeFragment)
 
-        val navigationMenu = findViewById<BottomNavigationView>(R.id.navigation_menu);
+        val navigationMenu = findViewById<BottomNavigationView>(R.id.navigation_menu)
+
         navigationMenu.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homeFragment -> {
@@ -34,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
                 R.id.profileFragment -> {
-                    loadFragment(loginFragment)
+                    checkForUserSession()
                     return@setOnItemSelectedListener true
                 }
                 else -> {
@@ -42,7 +53,18 @@ class MainActivity : AppCompatActivity() {
                     return@setOnItemSelectedListener true
                 }
             }
-        };
+        }
+    }
+
+    private fun checkForUserSession() {
+        val user = Firebase.auth.currentUser
+        if (user == null || user.isAnonymous) {
+            // User is signed in
+            loadFragment(loginFragment)
+        } else {
+            // No user is signed in
+            loadFragment(myProfileFragment)
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {

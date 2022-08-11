@@ -1,12 +1,12 @@
-package com.brenhr.mkonline.database
+package com.brenhr.mkonline.util
 
 import android.util.Log
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class BrandService {
+class CategoryParser {
     private val database = Firebase.database
-    private val myRef = database.getReference("Brand")
+    private val myRef = database.getReference("Category")
 
     fun getAll() {
         myRef.get().addOnSuccessListener {

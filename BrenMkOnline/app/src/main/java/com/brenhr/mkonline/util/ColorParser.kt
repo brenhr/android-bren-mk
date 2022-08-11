@@ -1,12 +1,12 @@
-package com.brenhr.mkonline.database
+package com.brenhr.mkonline.util
 
 import android.util.Log
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class CategoryService {
+class ColorParser {
     private val database = Firebase.database
-    private val myRef = database.getReference("Category")
+    private val myRef = database.getReference("Color")
 
     fun getAll() {
         myRef.get().addOnSuccessListener {

@@ -10,23 +10,38 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.cardview.widget.CardView
 import com.brenhr.mkonline.R
-import com.brenhr.mkonline.database.ProductParser
+import com.brenhr.mkonline.util.ProductParser
 import com.brenhr.mkonline.model.Product
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import android.graphics.Typeface
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 
 class HomeFragment : Fragment() {
-    private val productService: ProductParser = ProductParser()
-    private val storage = Firebase.storage
-    private val database = Firebase.database
+    private lateinit var auth: FirebaseAuth
+    private lateinit var productService: ProductParser
+    private lateinit var storage: FirebaseStorage
+    private lateinit var database: FirebaseDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        populateHome()
+        auth = Firebase.auth
+        productService = ProductParser()
+        storage = Firebase.storage
+        database = Firebase.database
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        initElements()
     }
 
     override fun onCreateView(
@@ -37,16 +52,37 @@ class HomeFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() =
-            HomeFragment().apply {
-
-            }
+    private fun initElements() {
+        checkSession()
     }
 
-    private fun populateHome() {
-        getAllProducts()
+    private fun checkSession() {
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            // User is signed in
+            getAllProducts()
+        } else {
+            // No user is signed in. Signing user in as anonymous user
+            signInUserAnonymously()
+        }
+    }
+
+    private fun signInUserAnonymously() {
+        auth.signInAnonymously()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("AnonymousAuthentication", "signInAnonymously:success")
+                    val user: FirebaseUser? = auth.currentUser
+                    Log.d("AnonymousAuthentication","User id: ${user!!.uid}")
+                    getAllProducts()
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.e("AnonymousAuthentication", "signInAnonymously:failure", task.exception)
+                    Toast.makeText(this.requireContext(), "Authentication failed.",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 
     private fun getAllProducts() {
@@ -101,8 +137,8 @@ class HomeFragment : Fragment() {
         val productImage = ImageView(this.requireContext())
         val imageParams = ViewGroup.LayoutParams(600, 550)
         productImage.layoutParams = imageParams
-        Glide.with(this.requireContext()).load(imageUrl).into(productImage);
-        //Adding image to cardlayout
+        Glide.with(this.requireContext()).load(imageUrl).into(productImage)
+        //Adding image to cardlinflaterayout
         cardLayout.addView(productImage)
 
         //Creating a vertical layout, which will be useful to order the product details

@@ -6,9 +6,10 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1503623188405797" />
         <entry key="app/src/main/res/layout/fragment_cart.xml" value="0.23233695652173914" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.21487603305785125" />
-        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.22509057971014493" />
+        <entry key="app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_my_profile.xml" value="0.23233695652173914" />
         <entry key="app/src/main/res/layout/fragment_product_detail.xml" value="0.21331521739130435" />
+        <entry key="app/src/main/res/layout/fragment_register.xml" value="0.335" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.24114583333333334" />
       </map>
     </option>

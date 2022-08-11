@@ -1,4 +1,4 @@
-package com.brenhr.mkonline.database
+package com.brenhr.mkonline.util
 
 import android.util.Log
 import com.brenhr.mkonline.model.Product

@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Login to BrenMkOnline"
+            android:text="@string/login_to_brenmkonline"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <Space
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Email"
+            android:hint="@string/email_text"
             android:inputType="textEmailAddress"
             android:minHeight="48dp" />
 
@@ -53,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:hint="@string/password_text"
             android:inputType="textPassword"
             android:minHeight="48dp" />
 
@@ -70,7 +71,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Login" />
+                android:text="@string/login_text" />
 
             <Space
                 android:layout_width="16dp"
@@ -82,7 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Sign up" />
+                android:text="@string/sign_up_text" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
