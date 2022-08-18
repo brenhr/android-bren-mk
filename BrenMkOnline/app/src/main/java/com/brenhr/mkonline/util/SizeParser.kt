@@ -1,28 +1,14 @@
 package com.brenhr.mkonline.util
 
-import android.util.Log
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.brenhr.mkonline.model.Size
+import com.google.firebase.database.DataSnapshot
 
 class SizeParser {
-    private val database = Firebase.database
-    private val myRef = database.getReference("Size")
 
-    fun getAll() {
-        myRef.get().addOnSuccessListener {
-            it.children.forEach { child ->
-                Log.i("database", "Got value ${child.value}")
-            }
-        }.addOnFailureListener{
-            Log.e("database", "Error getting data", it)
-        }
-    }
+    fun parser(sizeSnapshot: DataSnapshot): Size {
+        val id = sizeSnapshot.key.toString()
+        val name = sizeSnapshot.child("name").value.toString()
 
-    fun byId(id: String) {
-        myRef.child(id).get().addOnSuccessListener {
-            Log.i("database", "Got value ${it.value}")
-        }.addOnFailureListener{
-            Log.e("database", "Error getting data", it)
-        }
+        return Size(id,name)
     }
 }

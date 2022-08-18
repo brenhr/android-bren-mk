@@ -1,28 +1,15 @@
 package com.brenhr.mkonline.util
 
-import android.util.Log
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.brenhr.mkonline.model.Color
+import com.google.firebase.database.DataSnapshot
 
 class ColorParser {
-    private val database = Firebase.database
-    private val myRef = database.getReference("Color")
 
-    fun getAll() {
-        myRef.get().addOnSuccessListener {
-            it.children.forEach { child ->
-                Log.i("database", "Got value ${child.value}")
-            }
-        }.addOnFailureListener{
-            Log.e("database", "Error getting data", it)
-        }
-    }
+    fun parser(colorSnapshot: DataSnapshot): Color {
+        val id = colorSnapshot.key.toString()
+        val name = colorSnapshot.child("name").value.toString()
+        val hexcode = colorSnapshot.child("name").value.toString()
 
-    fun byId(id: String) {
-        myRef.child(id).get().addOnSuccessListener {
-            Log.i("database", "Got value ${it.value}")
-        }.addOnFailureListener{
-            Log.e("database", "Error getting data", it)
-        }
+        return Color(id, hexcode, name)
     }
 }

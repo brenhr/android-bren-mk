@@ -189,7 +189,7 @@ class HomeFragment : Fragment() {
         val spaceButton = Space(this.context)
         val spaceParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            100)
+            160)
         spaceButton.layoutParams = spaceParams
 
         val detailsButton = Button(this.requireContext())
@@ -198,6 +198,7 @@ class HomeFragment : Fragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT)
         detailsButton.layoutParams = buttonParams
         detailsButton.text = getString(R.string.showDetailsText)
+        detailsButton
 
         //Add elements to layout
         productDetailLayout.addView(productName)
@@ -216,5 +217,22 @@ class HomeFragment : Fragment() {
         //add card layout to main layout
         mainLayout!!.addView(cardSpace)
         mainLayout.addView(productCard)
+
+        detailsButton.setOnClickListener {
+            openDetailsFragment(product.id)
+        }
+    }
+
+    private fun openDetailsFragment(id: String) {
+        val detailsFragment = DetailsFragment()
+
+        val args = Bundle()
+        args.putString("id", id)
+        detailsFragment.arguments = args
+
+        val transaction = this.requireActivity().supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_container, detailsFragment)
+        transaction.disallowAddToBackStack()
+        transaction.commit()
     }
 }

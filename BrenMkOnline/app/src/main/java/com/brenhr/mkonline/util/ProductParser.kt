@@ -1,25 +1,10 @@
 package com.brenhr.mkonline.util
 
-import android.util.Log
 import com.brenhr.mkonline.model.Product
 import com.brenhr.mkonline.model.ProductDetail
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 class ProductParser {
-
-    fun byId(id: String) {
-        val database = Firebase.database
-        val myRef = database.getReference("Product")
-        myRef.child(id).get().addOnSuccessListener {
-            Log.i("database", "Got value ${it.value}")
-
-        }.addOnFailureListener{
-            Log.e("database", "Error getting data", it)
-        }
-
-    }
 
     fun parser(productSnapshot: DataSnapshot): Product {
         val id = productSnapshot.key.toString()
