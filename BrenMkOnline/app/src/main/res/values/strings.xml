@@ -9,4 +9,9 @@
     <string name="login_text">Login</string>
     <string name="sign_up_text">Sign up</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="my_cart">My cart</string>
+    <string name="summary">Summary</string>
+    <string name="products_in_cart">Products in cart: 0</string>
+    <string name="total_0_00_usd">Total: $0.00 USD</string>
+    <string name="continue_to_checkout">Continue to checkout</string>
 </resources>

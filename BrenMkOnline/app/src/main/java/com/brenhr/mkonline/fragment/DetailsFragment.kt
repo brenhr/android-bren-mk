@@ -6,8 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.brenhr.mkonline.R
 import com.brenhr.mkonline.model.Color
 import com.brenhr.mkonline.model.Size
@@ -21,9 +20,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 
-import android.widget.Spinner
-
-import android.widget.ArrayAdapter
 import com.brenhr.mkonline.model.ProductDetail
 import com.google.firebase.storage.ktx.storage
 
@@ -72,6 +68,12 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         loadElements()
+
+        val addToCartButton: Button = this.requireView().findViewById(R.id.addToCartButton)
+
+        addToCartButton.setOnClickListener {
+            showCart()
+        }
     }
 
     private fun loadElements() {
@@ -169,6 +171,15 @@ class DetailsFragment : Fragment() {
         }.addOnFailureListener{
             Log.e("SizeDatabase", "Error getting data", it)
         }
+    }
+
+    fun showCart() {
+        val cartFragment = CartFragment()
+
+        val transaction = this.requireActivity().supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.frame_container, cartFragment)
+        transaction.disallowAddToBackStack()
+        transaction.commit()
     }
 
 }
