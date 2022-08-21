@@ -41,8 +41,8 @@ class LoginFragment : Fragment() {
         signUpButton = this.requireView().findViewById(R.id.signUpButton)
 
         loginButton.setOnClickListener{
-            var email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
-            var password = this.requireView().findViewById<EditText>(R.id.password).text.toString()
+            val email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
+            val password = this.requireView().findViewById<EditText>(R.id.password).text.toString()
 
             Log.d("passwordAuthentication", "$email $password")
 
@@ -68,7 +68,7 @@ class LoginFragment : Fragment() {
         }
 
         signUpButton.setOnClickListener {
-            var email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
+            val email = this.requireView().findViewById<EditText>(R.id.email).text.toString()
             showRegisterView(email)
         }
 

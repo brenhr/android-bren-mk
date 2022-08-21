@@ -1,15 +1,23 @@
 package com.brenhr.mkonline.model
 
 class Item {
-    var color: String
-    var itemId: String
+    var id: String?
     var productId: String
-    var quantity: Int
+    var quantity: Long
+    var color: String
     var size: String
 
-    constructor(color: String, itemId: String, productId: String, quantity: Int, size: String) {
+    constructor(productId: String, quantity: Long, color: String, size: String) {
+        this.id = null
         this.color = color
-        this.itemId = itemId
+        this.productId = productId
+        this.quantity = quantity
+        this.size = size
+    }
+
+    constructor(id: String, productId: String, quantity: Long, color: String, size: String) {
+        this.id = id
+        this.color = color
         this.productId = productId
         this.quantity = quantity
         this.size = size

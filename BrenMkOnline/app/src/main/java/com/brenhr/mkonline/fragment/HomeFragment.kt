@@ -78,8 +78,6 @@ class HomeFragment : Fragment() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.e("AnonymousAuthentication", "signInAnonymously:failure", task.exception)
-                    Toast.makeText(this.requireContext(), "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -95,12 +93,11 @@ class HomeFragment : Fragment() {
         }.addOnFailureListener{
             Log.e("database", "Error getting data", it)
         }
-        Log.i("database", "Returning list")
     }
 
     private fun getImageFromStorage(product: Product) {
         val storageRef = storage.reference
-        val sku = product.sku!!.lowercase()
+        val sku = product.sku.lowercase()
         val spaceRef = storageRef.child("clothes/$sku/$sku-main.png")
         Log.i("storage","URI: ${spaceRef.path}")
         spaceRef.downloadUrl.addOnSuccessListener {
@@ -197,7 +194,6 @@ class HomeFragment : Fragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT)
         detailsButton.layoutParams = buttonParams
         detailsButton.text = getString(R.string.showDetailsText)
-        detailsButton
 
         //Add elements to layout
         productDetailLayout.addView(productName)
