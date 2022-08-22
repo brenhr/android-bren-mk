@@ -111,7 +111,7 @@ class HomeFragment : Fragment() {
         Log.i("UI","Product: " + product.sku)
         val productCard = CardView(this.requireContext())
         val productCardParams = RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, 700)
+            ViewGroup.LayoutParams.MATCH_PARENT, 560)
         productCard.layoutParams = productCardParams
         val mainLayout = this.view?.findViewById<LinearLayout>(R.id.mainLayout)
 

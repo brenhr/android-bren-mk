@@ -1,5 +1,6 @@
 package com.brenhr.mkonline.fragment
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.brenhr.mkonline.R
+import com.brenhr.mkonline.activity.CheckoutActivity
 import com.brenhr.mkonline.model.Cart
 import com.brenhr.mkonline.model.ItemCart
 import com.brenhr.mkonline.model.Product
@@ -70,25 +72,38 @@ class CartFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if(arguments != null) {
             orderId = arguments?.getString("orderId")!!
+            showCartView()
             getOrder()
         } else {
-            val reference = firestore.collection("users").document(user!!.uid)
-                .collection("orders")
-            reference.whereEqualTo("status", "cart").limit(1)
-                .get()
-                .addOnSuccessListener { documents ->
-                    if(!documents.isEmpty) {
-                        for (document in documents) {
-                            Log.d("FirestoreOrder", "Cart: ${document.id} => ${document.data}")
-                            orderId = document.id
-                            getOrder()
-                        }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("Firestore", "Error getting user cart: ", exception)
-                }
+            findOrderByUserId()
         }
+
+        val checkoutButton: Button = this.requireView().findViewById(R.id.checkoutButton)
+        checkoutButton.setOnClickListener {
+            showCheckoutView()
+        }
+    }
+
+    private fun findOrderByUserId() {
+        val reference = firestore.collection("users").document(user!!.uid)
+            .collection("orders")
+        reference.whereEqualTo("status", "cart").limit(1)
+            .get()
+            .addOnSuccessListener { documents ->
+                if(!documents.isEmpty) {
+                    showCartView()
+                    for (document in documents) {
+                        Log.d("FirestoreOrder", "Cart: ${document.id} => ${document.data}")
+                        orderId = document.id
+                        getOrder()
+                    }
+                } else {
+                    showEmptyCartView()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting user cart: ", exception)
+            }
     }
 
     private fun getOrder() {
@@ -292,6 +307,25 @@ class CartFragment : Fragment() {
 
         val table = this.requireView().findViewById<TableLayout>(R.id.cartTable)
         table.addView(row)
+    }
+
+    private fun showEmptyCartView() {
+        val layoutCart: LinearLayout = this.requireView().findViewById(R.id.cartLayout)
+        layoutCart.visibility = View.INVISIBLE
+        val emptyCart: LinearLayout = this.requireView().findViewById(R.id.emptyCart)
+        emptyCart.visibility = View.VISIBLE
+    }
+
+    private fun showCartView() {
+        val layoutCart: LinearLayout = this.requireView().findViewById(R.id.cartLayout)
+        layoutCart.visibility = View.VISIBLE
+        val emptyCart: LinearLayout = this.requireView().findViewById(R.id.emptyCart)
+        emptyCart.visibility = View.INVISIBLE
+    }
+
+    private fun showCheckoutView() {
+        val intent = Intent (activity, CheckoutActivity::class.java)
+        activity?.startActivity(intent)
     }
 
 }

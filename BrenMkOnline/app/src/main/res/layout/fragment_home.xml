@@ -5,25 +5,35 @@
     android:id="@+id/scrollView"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:fillViewport="true"
     tools:context=".fragment.HomeFragment">
 
-    <LinearLayout
-        android:id="@+id/mainLayout"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_alignParentTop="true">
 
-        <SearchView
-            android:id="@+id/productSearchBar"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:queryHint="Search a product">
+        <LinearLayout
+            android:id="@+id/mainLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        </SearchView>
+            <SearchView
+                android:id="@+id/productSearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                android:queryHint="Search a product">
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="0" />
-    </LinearLayout>
+            </SearchView>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_weight="0" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
 </ScrollView>

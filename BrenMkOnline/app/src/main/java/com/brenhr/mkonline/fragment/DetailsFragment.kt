@@ -85,6 +85,7 @@ class DetailsFragment : Fragment() {
         val addToCartButton: Button = this.requireView().findViewById(R.id.addToCartButton)
 
         addToCartButton.setOnClickListener {
+            showProgress()
             addItemToCart()
         }
     }
@@ -214,6 +215,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun showCart(orderId: String) {
+        hideProgress()
         val cartFragment = CartFragment()
 
         val args = Bundle()
@@ -247,6 +249,9 @@ class DetailsFragment : Fragment() {
             }
             .addOnFailureListener { exception ->
                 Log.d("FirestoreUser", "Error getting user", exception)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -272,6 +277,9 @@ class DetailsFragment : Fragment() {
             }
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting user cart: ", exception)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -309,6 +317,9 @@ class DetailsFragment : Fragment() {
         }
             .addOnFailureListener { exception ->
                 Log.w("FirestoreItems", "Error getting cart items: ", exception)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -328,6 +339,9 @@ class DetailsFragment : Fragment() {
 
             }.addOnFailureListener { e ->
                 Log.w("Firestore", "Error modifying order", e)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -340,6 +354,9 @@ class DetailsFragment : Fragment() {
                 showCart(orderId)
             }.addOnFailureListener { e ->
                 Log.w("Firestore", "Error updating item", e)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -384,6 +401,9 @@ class DetailsFragment : Fragment() {
                 createItem(uid, id, order.quantity)
             }.addOnFailureListener { e ->
                 Log.w("Firestore", "Error creating order", e)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -414,7 +434,20 @@ class DetailsFragment : Fragment() {
                 showCart(documentId)
             }.addOnFailureListener { e ->
                 Log.w("Firestore", "Error creating item", e)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun showProgress() {
+        val progressBar: RelativeLayout = this.requireView().findViewById(R.id.loadingPanel)
+        progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgress() {
+        val progressBar: RelativeLayout = this.requireView().findViewById(R.id.loadingPanel)
+        progressBar.visibility = View.INVISIBLE
     }
 
 }

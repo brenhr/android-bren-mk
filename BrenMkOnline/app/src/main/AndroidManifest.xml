@@ -10,6 +10,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BrenMkOnline">
         <activity
+            android:name=".activity.OrderConfirmActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.CheckoutActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
