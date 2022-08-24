@@ -25,3 +25,4 @@ replay_pid*
 BrenMkOnline/app/google-services.json
 BrenMkOnline/.gradle/
 BrenMkOnline/.idea/
+.DS_Store

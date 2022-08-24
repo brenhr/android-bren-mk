@@ -80,7 +80,7 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkSession()
+        loadElements()
 
         val addToCartButton: Button = this.requireView().findViewById(R.id.addToCartButton)
 
@@ -90,12 +90,16 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun checkSession() {
+    private fun addItemToCart() {
+        findUser()
+    }
+
+    private fun findUser() {
         val user = Firebase.auth.currentUser
 
         if (user != null) {
             Log.d("Authentication", "User ID: ${user.uid}")
-            loadElements()
+            findUserData(user)
         } else {
             signInUserAnonymously()
         }
@@ -108,11 +112,13 @@ class DetailsFragment : Fragment() {
                     // Sign in success, update UI with the signed-in user's information
                     val user: FirebaseUser? = auth.currentUser
                     Log.d("AnonymousAuthentication","User id: ${user!!.uid}")
-                    loadElements()
+                    createFirestoreAnonymousUser(user.uid)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.e("AnonymousAuthentication", "signInAnonymously:failure", task.exception)
-                    loadElements()
+                    hideProgress()
+                    Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                        Toast.LENGTH_SHORT).show()
                 }
             }
     }
@@ -168,6 +174,28 @@ class DetailsFragment : Fragment() {
 
     }
 
+    private fun findUserData(user: FirebaseUser) {
+        val userReference = firestore.collection("users").document(user.uid)
+
+        userReference.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    Log.d("FirestoreUser", "User data: ${document.data}")
+                    firestoreUser = userParser.parser(document)
+                    findUserCart()
+                } else {
+                    Log.d("FirestoreUser", "No such user")
+                    createFirestoreAnonymousUser(user.uid)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("FirestoreUser", "Error getting user", exception)
+                hideProgress()
+                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
+                    Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun getCatalogs(product: Product) {
         product.details.forEach {
             addColorToList(it.color)
@@ -214,6 +242,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
+
     private fun showCart(orderId: String) {
         hideProgress()
         val cartFragment = CartFragment()
@@ -226,33 +255,6 @@ class DetailsFragment : Fragment() {
         transaction.replace(R.id.frame_container, cartFragment)
         transaction.disallowAddToBackStack()
         transaction.commit()
-    }
-
-    private fun addItemToCart() {
-        findUser()
-    }
-
-    private fun findUser() {
-        val user = Firebase.auth.currentUser!!
-        val userReference = firestore.collection("users").document(user.uid)
-
-        userReference.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    Log.d("FirestoreUser", "User data: ${document.data}")
-                    firestoreUser = userParser.parser(document)
-                    findUserCart()
-                } else {
-                    Log.d("FirestoreUser", "No such user")
-                    createFirestoreAnonymousUser(user.uid)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("FirestoreUser", "Error getting user", exception)
-                hideProgress()
-                Toast.makeText(this.requireContext(), "Couldn't add item to cart. Please try later.",
-                    Toast.LENGTH_SHORT).show()
-            }
     }
 
     private fun findUserCart() {

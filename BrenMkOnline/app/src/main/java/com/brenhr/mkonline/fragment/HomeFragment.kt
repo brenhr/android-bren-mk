@@ -53,33 +53,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun initElements() {
-        checkSession()
-    }
-
-    private fun checkSession() {
-        val user = Firebase.auth.currentUser
-        if (user != null) {
-            Log.d("Authentication", "User ID: ${user.uid}")
-            getAllProducts()
-        } else {
-            // No user is signed in. Signing user in as anonymous user
-            signInUserAnonymously()
-        }
-    }
-
-    private fun signInUserAnonymously() {
-        auth.signInAnonymously()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    val user: FirebaseUser? = auth.currentUser
-                    Log.d("AnonymousAuthentication","User id: ${user!!.uid}")
-                    getAllProducts()
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Log.e("AnonymousAuthentication", "signInAnonymously:failure", task.exception)
-                }
-            }
+        getAllProducts()
     }
 
     private fun getAllProducts() {
