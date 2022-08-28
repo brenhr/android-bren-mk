@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.brenhr.mkonline"
@@ -51,5 +51,6 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
-
+    implementation 'com.google.firebase:firebase-functions-ktx'
+    implementation 'com.stripe:stripe-android:20.10.0'
 }

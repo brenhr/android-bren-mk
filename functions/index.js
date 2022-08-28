@@ -4,8 +4,8 @@ const cors = require("cors")({origin: true});
 const express = require("express");
 const https = require("https");
 
-const stripe = require('stripe')(functions.config().stripe.secret, {
-  apiVersion: '2022-08-01',
+const stripe = require("stripe")(functions.config().stripe.secret, {
+  apiVersion: "2022-08-01",
 });
 
 const app = express();
@@ -162,14 +162,10 @@ app.post("/changeOrderStatus", (req, res) => {
 
 exports.app = functions.https.onRequest(app);
 
-/***********************************************************************************************************/
-/****************************************** STRIPE FUNCTIONS ***********************************************/
-/***********************************************************************************************************/
-
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({
     email: user.email,
-    metadata: { firebaseUID: user.uid },
+    metadata: {firebaseUID: user.uid},
   });
 
   await admin.firestore().collection("stripe_customers").doc(user.uid).set({
@@ -181,8 +177,8 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
 exports.createEphemeralKey = functions.https.onCall(async (data, context) => {
   if (!context.auth) {
     throw new functions.https.HttpsError(
-      "failed-precondition",
-      "The function must be called while authenticated!"
+        "failed-precondition",
+        "The function must be called while authenticated!",
     );
   }
   const uid = context.auth.uid;
@@ -193,8 +189,8 @@ exports.createEphemeralKey = functions.https.onCall(async (data, context) => {
       await admin.firestore().collection("stripe_customers").doc(uid).get()
     ).data().customer_id;
     const key = await stripe.ephemeralKeys.create(
-      { customer },
-      { apiVersion: data.api_version }
+        {customer: customer},
+        {apiVersion: "2022-08-01"},
     );
     return key;
   } catch (error) {
@@ -203,98 +199,100 @@ exports.createEphemeralKey = functions.https.onCall(async (data, context) => {
 });
 
 exports.createStripePayment = functions.firestore
-  .document("stripe_customers/{userId}/payments/{pushId}")
-  .onCreate(async (snap, context) => {
-    const { amount, currency } = snap.data();
-    try {
-      const customer = (await snap.ref.parent.parent.get()).data().customer_id;
-      const ephemeralKey = await stripe.ephemeralKeys.create(
-        { customer },
-        { apiVersion: "2022-08-01" }
-      );
-      const idempotencyKey = context.params.pushId;
-      const payment = await stripe.paymentIntents.create(
-        {
-          amount,
-          currency,
-          customer,
-        },
-        { idempotencyKey }
-      );
-      payment.ephemeralKey = ephemeralKey.secret;
-      await snap.ref.set(payment);
-    } catch (error) {
-      const errorMesage = error.type ? 
-          error.message: 
-          "An error has occurred, please try later.";
-      snap.ref.set({ error: errorMesage }, { merge: true });
-      console.log(errorMesage);
-    }
-  });
+    .document("stripe_customers/{userId}/payments/{pushId}")
+    .onCreate(async (snap, context) => {
+      const {amount, currency} = snap.data();
+      try {
+        const customer = (await snap.ref.parent.parent.get())
+            .data().customer_id;
+        const ephemeralKey = await stripe.ephemeralKeys.create(
+            {customer: customer},
+            {apiVersion: "2022-08-01"},
+        );
+        const idempotencyKey = context.params.pushId;
+        const payment = await stripe.paymentIntents.create(
+            {
+              amount,
+              currency,
+              customer,
+            },
+            {idempotencyKey},
+        );
+        payment.ephemeralKey = ephemeralKey.secret;
+        await snap.ref.set(payment);
+      } catch (error) {
+        const errorMesage = error.type ?
+            error.message:
+            "An error has occurred, please try later.";
+        snap.ref.set({error: errorMesage}, {merge: true});
+        console.log(errorMesage);
+      }
+    });
 
 const updatePaymentRecord = async (id) => {
   const payment = await stripe.paymentIntents.retrieve(id);
   const customerId = payment.customer;
   const customersSnap = await admin
-    .firestore()
-    .collection("stripe_customers")
-    .where("customer_id", "==", customerId)
-    .get();
+      .firestore()
+      .collection("stripe_customers")
+      .where("customer_id", "==", customerId)
+      .get();
   if (customersSnap.size !== 1) throw new Error("User not found!");
   const paymentsSnap = await customersSnap.docs[0].ref
-    .collection("payments")
-    .where("id", "==", payment.id)
-    .get();
+      .collection("payments")
+      .where("id", "==", payment.id)
+      .get();
   if (paymentsSnap.size !== 1) throw new Error("Payment not found!");
   await paymentsSnap.docs[0].ref.set(payment);
 };
 
 exports.handleWebhookEvents = functions.https.onRequest(async (req, resp) => {
   const relevantEvents = new Set([
-    'payment_intent.succeeded',
-    'payment_intent.processing',
-    'payment_intent.payment_failed',
-    'payment_intent.canceled',
+    "payment_intent.succeeded",
+    "payment_intent.processing",
+    "payment_intent.payment_failed",
+    "payment_intent.canceled",
   ]);
 
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(
-      req.rawBody,
-      req.headers['stripe-signature'],
-      functions.config().stripe.webhooksecret
+        req.rawBody,
+        req.headers["stripe-signature"],
+        functions.config().stripe.webhooksecret,
     );
   } catch (error) {
-    console.error('❗️ Webhook Error: Invalid Secret');
-    resp.status(401).send('Webhook Error: Invalid Secret');
+    console.error("Webhook Error: Invalid Secret");
+    resp.status(401).send("Webhook Error: Invalid Secret");
     return;
   }
 
   if (relevantEvents.has(event.type)) {
     try {
       switch (event.type) {
-        case 'payment_intent.succeeded':
-        case 'payment_intent.processing':
-        case 'payment_intent.payment_failed':
-        case 'payment_intent.canceled':
+        case "payment_intent.succeeded":
+        case "payment_intent.processing":
+        case "payment_intent.payment_failed":
+        case "payment_intent.canceled": {
           const id = event.data.object.id;
           await updatePaymentRecord(id);
           break;
+        }
         default:
-          throw new Error('Unhandled relevant event!');
+          throw new Error("Unhandled relevant event!");
       }
     } catch (error) {
       console.log("Webhook error for: " + event.data.object.id + ". " +
-        error.message
+        error.message,
       );
-      resp.status(400).send('Webhook handler failed. View Function logs.');
+      resp.status(400).send("Webhook handler failed. View Function logs.");
       return;
     }
   }
 
   // Return a response to Stripe to acknowledge receipt of the event.
-  resp.json({ received: true });
+  resp.json({received: true});
 });
 
 exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
@@ -303,9 +301,9 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   await stripe.customers.del(customer.customer_id);
   // Delete the customers payments & payment methods in firestore.
   const snapshot = await dbRef
-    .doc(user.uid)
-    .collection("payment_methods")
-    .get();
+      .doc(user.uid)
+      .collection("payment_methods")
+      .get();
   snapshot.forEach((snap) => snap.ref.delete());
   await dbRef.doc(user.uid).delete();
   return;

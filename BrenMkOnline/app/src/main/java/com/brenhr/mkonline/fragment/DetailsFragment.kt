@@ -366,7 +366,7 @@ class DetailsFragment : Fragment() {
         val profilePicture = "https://firebasestorage.googleapis.com/v0/b/bren-mk-android.appspot" +
                 ".com/o/profile-pictures%2Fdefault%2FImage10.png?alt=media&token=5d722677-e225-" +
                 "4aa4-8f35-1eb98b12bc1f"
-        val user = User("Anonymous","Anonymous","Anonymous",profilePicture)
+        val user = User("","","",profilePicture)
         firestore.collection("users").document(uid)
             .set(user).addOnSuccessListener {
                 Log.d("Firestore", "User successfully created!")

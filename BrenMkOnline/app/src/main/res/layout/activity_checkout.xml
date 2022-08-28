@@ -51,7 +51,7 @@
                                 android:orientation="horizontal">
 
                                 <TextView
-                                    android:id="@+id/textView12"
+                                    android:id="@+id/totalItems"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -59,7 +59,7 @@
                                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                                 <TextView
-                                    android:id="@+id/textView13"
+                                    android:id="@+id/totalCost"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -126,6 +126,15 @@
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/phoneField"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="Phone Number"
+                        android:inputType="phone"
+                        android:minHeight="48dp" />
 
                     <TextView
                         android:id="@+id/textView18"
@@ -224,92 +233,55 @@
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="10dp" />
+                        android:layout_height="30dp" />
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/paymentMethod"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <EditText
-                            android:id="@+id/cardNameField"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:hint="Name"
-                            android:inputType="textPersonName" />
-
-                        <Space
-                            android:layout_width="10dp"
-                            android:layout_height="wrap_content" />
-
-                        <EditText
-                            android:id="@+id/cardLastNameField"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:hint="Last Name"
-                            android:inputType="textPersonName" />
-
-                    </LinearLayout>
-
-                    <Space
-                        android:layout_width="wrap_content"
-                        android:layout_height="10dp"
-                        android:layout_weight="1" />
-
-                    <EditText
-                        android:id="@+id/cardNumberField"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:ems="10"
-                        android:hint="Card Number"
-                        android:inputType="number" />
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="No payment selected"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="10dp" />
+                        android:layout_height="30dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
-
-                        <EditText
-                            android:id="@+id/validField"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_weight="1"
-                            android:ems="10"
-                            android:hint="MM/YY"
-                            android:inputType="textPersonName" />
-
-                        <EditText
-                            android:id="@+id/cvvField"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:ems="10"
-                            android:hint="CVV"
-                            android:inputType="numberPassword" />
-                    </LinearLayout>
                 </LinearLayout>
 
             </RelativeLayout>
 
         </ScrollView>
 
-        <Space
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/paymentButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:text="Confirm order and pay" />
+            <Button
+                android:id="@+id/paymentButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="Add payment method" />
+        </LinearLayout>
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:background="#FFFFFF"
+        android:backgroundTint="#FFFFFF"
+        android:gravity="center"
+        android:visibility="invisible">
+
+        <ProgressBar
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:indeterminate="true" />
+    </RelativeLayout>
 </RelativeLayout>

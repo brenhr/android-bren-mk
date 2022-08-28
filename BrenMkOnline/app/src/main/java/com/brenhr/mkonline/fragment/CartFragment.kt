@@ -80,7 +80,7 @@ class CartFragment : Fragment() {
 
         val checkoutButton: Button = this.requireView().findViewById(R.id.checkoutButton)
         checkoutButton.setOnClickListener {
-            showCheckoutView()
+            showCheckoutView(orderId)
         }
     }
 
@@ -323,8 +323,9 @@ class CartFragment : Fragment() {
         emptyCart.visibility = View.INVISIBLE
     }
 
-    private fun showCheckoutView() {
+    private fun showCheckoutView(orderId: String) {
         val intent = Intent (activity, CheckoutActivity::class.java)
+        intent.putExtra("orderId",orderId)
         activity?.startActivity(intent)
     }
 
