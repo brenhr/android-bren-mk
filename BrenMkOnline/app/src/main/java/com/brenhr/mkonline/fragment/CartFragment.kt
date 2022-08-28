@@ -327,6 +327,7 @@ class CartFragment : Fragment() {
         val intent = Intent (activity, CheckoutActivity::class.java)
         intent.putExtra("orderId",orderId)
         activity?.startActivity(intent)
+        parentFragmentManager.beginTransaction().remove(this).commit()
     }
 
 }

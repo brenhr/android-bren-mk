@@ -15,8 +15,8 @@ class OrderConfirmActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
 
     private lateinit var orderId: String
-    private lateinit var totalItems: String
-    private lateinit var totalCost: String
+    private var totalItems: Long = 0
+    private  var totalCost: Long = 0
     private lateinit var user: FirebaseUser
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +26,8 @@ class OrderConfirmActivity : AppCompatActivity() {
         user = auth.currentUser!!
 
         orderId = intent.getStringExtra("orderId")!!
-        totalItems = intent.getStringExtra("items")!!
-        totalCost = intent.getStringExtra("total")!!
+        totalItems = intent.getLongExtra("items", 0)!!
+        totalCost = intent.getLongExtra("total", 0)!!
 
         setup()
     }
@@ -38,8 +38,8 @@ class OrderConfirmActivity : AppCompatActivity() {
         val total = findViewById<TextView>(R.id.totalText)
         val textEmail = findViewById<TextView>(R.id.textEmail)
         order.text = orderId
-        items.text = totalItems
-        total.text = totalCost
-        textEmail.text = "We will send you updates to your mail: $textEmail"
+        items.text = "$totalItems"
+        total.text = "$ $totalCost USD"
+        textEmail.text = "We will send you updates to your mail: ${user.email}"
     }
 }

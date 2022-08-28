@@ -11,7 +11,7 @@ class CartParser {
         val id = order.id
         val quantity = order.data?.get("quantity") as Long
         val status = order.data?.get("status") as String
-        val total = order.data?.get("total") as Double
+        val total = order.data?.get("total") as Long
 
         return Cart(id, status, quantity, total)
     }

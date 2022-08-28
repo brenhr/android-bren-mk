@@ -9,7 +9,7 @@ class OrderParser {
         val id = document.id
         val status = document.data?.get("status") as String
         val quantity = document.data?.get("quantity") as Long
-        val total = document.data?.get("total") as Double
+        val total = document.data?.get("total") as Long
 
         return Order(id, status, quantity, total)
     }

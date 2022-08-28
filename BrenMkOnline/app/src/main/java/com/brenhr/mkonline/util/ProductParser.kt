@@ -20,7 +20,7 @@ class ProductParser {
         }
 
         val name = productSnapshot.child("name").value.toString()
-        val price = productSnapshot.child("price").value.toString().toDouble()
+        val price = productSnapshot.child("price").value.toString().toLong()
         val sku = productSnapshot.child("sku").value.toString()
 
         return Product(id, brandId, categoryId, currency, datetime, description, details, name, price, sku)

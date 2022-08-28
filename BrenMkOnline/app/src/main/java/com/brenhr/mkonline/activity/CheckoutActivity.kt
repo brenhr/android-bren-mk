@@ -156,6 +156,9 @@ class CheckoutActivity : AppCompatActivity() {
                     }
 
                     if (snapshot != null && snapshot.exists()) {
+                        if(snapshot.data?.get("status").toString() == "succeeded") {
+                            updateOrderStatus(orderId)
+                        }
                         Log.d("payment", "Current data: ${snapshot.data}")
                         val clientSecret = snapshot.data?.get("client_secret")
                         Log.d("payment", "Create paymentIntent returns $clientSecret")
@@ -164,8 +167,6 @@ class CheckoutActivity : AppCompatActivity() {
                                 selectedPaymentMethod.id!!,
                                 (it as String)
                             ))
-
-                            showOrderConfirmation(cart)
                         }
                     } else {
                         Log.e("payment", "Current payment intent : null")
@@ -178,7 +179,22 @@ class CheckoutActivity : AppCompatActivity() {
             }
             .addOnFailureListener { e ->
                 Log.w("payment", "Error adding document", e)
+                hideProgress()
+                Toast.makeText(this, "Payment couldn't be processed.",
+                    Toast.LENGTH_SHORT).show()
                 paymentButton.isEnabled = true
+            }
+    }
+
+    private fun updateOrderStatus(orderId: String) {
+        firestore.collection("users").document(user.uid)
+            .collection("orders").document(orderId)
+            .update("status", "confirmed").addOnSuccessListener {
+                showOrderConfirmation(cart)
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error when confirming payment.",
+                    Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -207,7 +223,6 @@ class CheckoutActivity : AppCompatActivity() {
     private fun setupPaymentSession() {
         CustomerSession.initCustomerSession(this, FirebaseEphemeralKeyProvider())
         val paymentButton = findViewById<Button>(R.id.paymentButton)
-        val paymentMethod = findViewById<TextView>(R.id.paymentMethod)
 
         paymentSession = PaymentSession(this, PaymentSessionConfig.Builder()
             .setShippingInfoRequired(false)
@@ -228,7 +243,9 @@ class CheckoutActivity : AppCompatActivity() {
 
                         data.paymentMethod?.let {
                             Log.d("PaymentSession", "PaymentMethod $it selected")
+                            val paymentMethod = findViewById<TextView>(R.id.paymentMethod)
                             paymentMethod.text = "${it.card?.brand} card ends with ${it.card?.last4}"
+                            paymentButton.text = "Confirm data and pay"
                             selectedPaymentMethod = it
                         }
                     }
@@ -250,7 +267,7 @@ class CheckoutActivity : AppCompatActivity() {
         intent.putExtra("orderId", cart.id)
         intent.putExtra("items", cart.quantity)
         intent.putExtra("total", cart.total)
-        this?.startActivity(intent)
+        this.startActivity(intent)
     }
 
     private fun showProgress() {
@@ -261,6 +278,13 @@ class CheckoutActivity : AppCompatActivity() {
     private fun hideProgress() {
         val progressBar: RelativeLayout = findViewById(R.id.loadingPanel)
         progressBar.visibility = View.INVISIBLE
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data != null) {
+            paymentSession.handlePaymentData(requestCode, resultCode, data)
+        }
     }
 
 }

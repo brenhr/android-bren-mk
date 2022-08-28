@@ -12,11 +12,11 @@ class Product {
     var description: String
     var details: MutableList<ProductDetail>
     var name: String
-    var price: Double
+    var price: Long
     var sku: String
 
     constructor(id: String, brandId: String, categoryId: String, currency: String, datetime: String,
-                description: String, details: MutableList<ProductDetail>, name: String, price: Double,
+                description: String, details: MutableList<ProductDetail>, name: String, price: Long,
                 sku: String) {
         this.id = id
         this.brandId = brandId
