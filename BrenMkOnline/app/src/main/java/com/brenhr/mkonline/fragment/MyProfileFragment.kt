@@ -110,7 +110,7 @@ class MyProfileFragment : Fragment() {
 
     private fun getProfilePicture(userSnapshot: DocumentSnapshot) {
         val profilePictureRef = storage.reference
-            .child("profile-pictures/${user.uid}/${user.uid}.jpg")
+            .child("profile-pictures/${user.uid}.jpg")
         profilePictureRef.downloadUrl.addOnSuccessListener {
             userInfo = userParser.parser(userSnapshot, it.toString())
             populateUserInfo()
@@ -240,7 +240,7 @@ class MyProfileFragment : Fragment() {
         }
 
     private fun uploadImageToStorage(bitmap: Bitmap) {
-        val ref = storage.reference.child("profile-pictures/${user.uid}/${user.uid}.jpg")
+        val ref = storage.reference.child("profile-pictures/${user.uid}.jpg")
         val baos = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
