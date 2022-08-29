@@ -142,9 +142,9 @@ class CheckoutActivity : AppCompatActivity() {
         val paymentCollection = Firebase.firestore
             .collection("stripe_customers").document(user?.uid?:"")
             .collection("payments")
-
+        val finalAmount = cart.total * 100
         paymentCollection.add(hashMapOf(
-            "amount" to cart.total,
+            "amount" to finalAmount,
             "currency" to "usd"
         ))
             .addOnSuccessListener { documentReference ->

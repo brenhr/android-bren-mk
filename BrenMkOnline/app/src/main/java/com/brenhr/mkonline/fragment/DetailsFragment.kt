@@ -181,7 +181,7 @@ class DetailsFragment : Fragment() {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     Log.d("FirestoreUser", "User data: ${document.data}")
-                    firestoreUser = userParser.parser(document)
+                    firestoreUser = userParser.parser(document, "")
                     findUserCart()
                 } else {
                     Log.d("FirestoreUser", "No such user")
