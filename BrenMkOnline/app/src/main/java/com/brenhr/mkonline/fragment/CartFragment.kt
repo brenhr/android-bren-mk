@@ -54,7 +54,11 @@ class CartFragment : Fragment() {
         database = Firebase.database
         storage = Firebase.storage
 
-        user = auth.currentUser!!
+        if(auth.currentUser != null) {
+            user = auth.currentUser!!
+        }
+
+
 
         productParser = ProductParser()
         cartParser = CartParser()
@@ -85,25 +89,30 @@ class CartFragment : Fragment() {
     }
 
     private fun findOrderByUserId() {
-        val reference = firestore.collection("users").document(user!!.uid)
-            .collection("orders")
-        reference.whereEqualTo("status", "cart").limit(1)
-            .get()
-            .addOnSuccessListener { documents ->
-                if(!documents.isEmpty) {
-                    showCartView()
-                    for (document in documents) {
-                        Log.d("FirestoreOrder", "Cart: ${document.id} => ${document.data}")
-                        orderId = document.id
-                        getOrder()
+        if(auth.currentUser != null) {
+            val reference = firestore.collection("users").document(user!!.uid)
+                .collection("orders")
+            reference.whereEqualTo("status", "cart").limit(1)
+                .get()
+                .addOnSuccessListener { documents ->
+                    if(!documents.isEmpty) {
+                        showCartView()
+                        for (document in documents) {
+                            Log.d("FirestoreOrder", "Cart: ${document.id} => ${document.data}")
+                            orderId = document.id
+                            getOrder()
+                        }
+                    } else {
+                        showEmptyCartView()
                     }
-                } else {
-                    showEmptyCartView()
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting user cart: ", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.w("Firestore", "Error getting user cart: ", exception)
+                }
+        } else {
+            showEmptyCartView()
+        }
+
     }
 
     private fun getOrder() {
