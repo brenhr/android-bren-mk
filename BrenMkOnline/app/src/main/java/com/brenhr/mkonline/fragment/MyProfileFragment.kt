@@ -159,7 +159,7 @@ class MyProfileFragment : Fragment() {
         val orderIdText = TextView(this.requireContext())
         orderIdText.text = order.id!!.substring(0,13)
         val orderIdTextParams = LinearLayout.LayoutParams(
-            490,
+            650,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         orderIdText.layoutParams = orderIdTextParams
         val boldTypeface = Typeface.defaultFromStyle(Typeface.BOLD)
@@ -170,16 +170,16 @@ class MyProfileFragment : Fragment() {
         val itemsText = TextView(this.requireContext())
         itemsText.text = order.quantity.toString()
         val itemsTextParams = LinearLayout.LayoutParams(
-            120,
+            160,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         itemsText.layoutParams = itemsTextParams
         itemsText.setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
 
         //Price text view
         val priceText = TextView(this.requireContext())
-        "$ ${order.total}".also { priceText.text = it }
+        "$ ${order.total} ".also { priceText.text = it }
         val priceTextParams = LinearLayout.LayoutParams(
-            170,
+            250,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         priceText.layoutParams = priceTextParams
         priceText.setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
@@ -188,7 +188,7 @@ class MyProfileFragment : Fragment() {
         val statusText = TextView(this.requireContext())
         statusText.text = order.status
         val statusTextParams = LinearLayout.LayoutParams(
-            250,
+            320,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         statusText.layoutParams = statusTextParams
         statusText.setTextAppearance(R.style.TextAppearance_AppCompat_Medium)

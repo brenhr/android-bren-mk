@@ -1,9 +1,12 @@
 package com.brenhr.mkonline.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.brenhr.mkonline.MainActivity
 import com.brenhr.mkonline.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -41,5 +44,12 @@ class OrderConfirmActivity : AppCompatActivity() {
         items.text = "$totalItems"
         total.text = "$ $totalCost USD"
         textEmail.text = "We will send you updates to your mail: ${user.email}"
+
+        val homeButton = findViewById<Button>(R.id.homeButton)
+        homeButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

@@ -85,7 +85,7 @@ class HomeFragment : Fragment() {
         Log.i("UI","Product: " + product.sku)
         val productCard = CardView(this.requireContext())
         val productCardParams = RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT, 560)
+            ViewGroup.LayoutParams.MATCH_PARENT, 650)
         productCard.layoutParams = productCardParams
         val mainLayout = this.view?.findViewById<LinearLayout>(R.id.mainLayout)
 
@@ -159,7 +159,7 @@ class HomeFragment : Fragment() {
         val spaceButton = Space(this.context)
         val spaceParams = RelativeLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            160)
+            100)
         spaceButton.layoutParams = spaceParams
 
         val detailsButton = Button(this.requireContext())

@@ -268,7 +268,7 @@ class CartFragment : Fragment() {
         val spinnerLayout = LinearLayout(this.requireContext())
         spinnerLayout.orientation = LinearLayout.VERTICAL
         val spinnerLayoutParams = LinearLayout.LayoutParams(
-            200,
+            350,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         spinnerLayoutParams.gravity = Gravity.CENTER
         spinnerLayout.layoutParams = spinnerLayoutParams
